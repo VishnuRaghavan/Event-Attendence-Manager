@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/homeItem"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/title_home" />
+
+    <item
+        android:id="@+id/addPersonItem"
+        android:icon="@drawable/person"
+        android:title="Add Person" />
+
+    <item
+        android:id="@+id/scanItem"
+        android:icon="@drawable/camera"
+        android:title="Scan" />
+    <item
+        android:id="@+id/listItem"
+        android:icon="@drawable/list"
+        android:title="List" />
+
+</menu>

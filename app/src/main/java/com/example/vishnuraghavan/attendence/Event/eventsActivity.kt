@@ -42,8 +42,6 @@ class eventsActivity : AppCompatActivity() {
             val req = Request.Builder().url("https://test3.htycoons.in/api/list_events")
                     .header("Authorization", "Bearer $token").post(FormBody.Builder().build()).build()
 
-            Log.d("request is ", req.toString())
-
             val client = OkHttpClient()
             val res = client.newCall(req).execute()
 
