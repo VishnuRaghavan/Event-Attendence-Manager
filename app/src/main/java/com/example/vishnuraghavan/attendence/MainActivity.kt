@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity() {
         progressBar.visibility = View.VISIBLE
 
         doAsync {
+
             val body = FormBody.Builder()
                     .add("username", username.text.toString())
                     .add("password", pass.text.toString()).build()
