@@ -14,18 +14,19 @@ import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import org.jetbrains.anko.toast
 import okhttp3.Request
+import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
 class AddMemberFragment : Fragment() {
-    var token = ""
+
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.add_member_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        token = arguments!!.getString("token")
         button2.setOnClickListener() {
 
             if (name.text.isNotEmpty()
@@ -35,6 +36,7 @@ class AddMemberFragment : Fragment() {
                     || reg.text.isNotEmpty()) {
 
                 sentRequestToServer()
+
             } else {
                 AlertDialog.Builder(context!!)
                         .setTitle("Incomplete Form")
@@ -61,7 +63,7 @@ class AddMemberFragment : Fragment() {
 
 
             val req = Request.Builder().url("https://test3.htycoons.in/api/add_participant")
-                    .header("Authorization", "Bearer $token")
+                    .header("Authorization", "Bearer ${arguments!!.getString("token")}")
                     .post(reqBody).build()
 
             val client = OkHttpClient()

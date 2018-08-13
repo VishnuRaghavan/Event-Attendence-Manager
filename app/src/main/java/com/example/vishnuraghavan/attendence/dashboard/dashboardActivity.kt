@@ -35,6 +35,7 @@ class dashboardActivity : AppCompatActivity() {
             }
             R.id.scanItem -> {
                 val qrFragment = CameraFragment()
+                qrFragment.arguments = bundle
                 addFragment(qrFragment)
                 return@OnNavigationItemSelectedListener true
             }
