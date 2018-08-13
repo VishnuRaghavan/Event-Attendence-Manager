@@ -38,6 +38,7 @@ class EventAdapter(val events: ArrayList<Event>) : RecyclerView.Adapter<EventAda
             v.row.setOnClickListener {
                 val context = v.context
                 context.startActivity(context.intentFor<dashboardActivity>(
+                        "event_id" to item.id,
                         "name" to item.name,
                         "days" to item.days,
                         "date" to item.Date,

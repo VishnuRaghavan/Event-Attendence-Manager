@@ -18,77 +18,92 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
 class AddMemberFragment : Fragment() {
-
+    var token = ""
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.add_member_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        token = arguments!!.getString("token")
+        button2.setOnClickListener() {
 
-        button2.setOnClickListener(){
+            if (name.text.isNotEmpty()
+                    || phone.text.isNotEmpty()
+                    || email.text.isNotEmpty()
+                    || organization.text.isNotEmpty()
+                    || reg.text.isNotEmpty()) {
 
-            val token = arguments!!.getString("token")
-//            Log.d("token", "token  is : $token")
-
-            doAsync {
-
-                val reqBody = FormBody.Builder()
-                        .add("reg_id", reg.text.toString())
-                        .add("name", name.text.toString())
-                        .add("phone_number", phone.text.toString())
-                        .add("email_address", email.text.toString())
-                        .add("organization", organization.text.toString()).build()
-
-
-                val req = Request.Builder().url("https://test3.htycoons.in/api/add_participant")
-                        .header("Authorization", "Bearer $token")
-                        .post(reqBody).build()
-
-                val client = OkHttpClient()
-
-                val res = client.newCall(req).execute()
-
-
-                uiThread {
-
-                    when (res.code()) {
-                        200 -> {
-
-                            if (res.body() != null) {
-                                AlertDialog.Builder(context!!)
-                                        .setTitle("Success!")
-                                        .setMessage("Details added successfully!")
-                                        .setNeutralButton("OK") { dialog, which ->
-                                            dialog.dismiss()
-                                        }.show()
-                            }
+                sentRequestToServer()
+            } else {
+                AlertDialog.Builder(context!!)
+                        .setTitle("Incomplete Form")
+                        .setMessage("Fill the form first and try again !!")
+                        .setNeutralButton("ok") { dialog, which ->
+                            dialog.cancel()
                         }
+                        .show()
+            }
 
-                        400 -> {
-                            AlertDialog.Builder(context!!)
-                                    .setTitle("Error")
-                                    .setMessage("An error has occured!")
-                                    .setNeutralButton("OK") { dialog, which ->
-                                        dialog.dismiss()
-                                    }.show()
-                        }
+        }
+    }
 
-                        404 -> {
+    fun sentRequestToServer() {
+        doAsync {
+
+            val reqBody = FormBody.Builder()
+                    .add("event_id", arguments!!.getString("eventID"))
+                    .add("name", name.text.toString())
+                    .add("phone_number", phone.text.toString())
+                    .add("email_address", email.text.toString())
+                    .add("organization", organization.text.toString())
+                    .add("reg_id", reg.text.toString()).build()
+
+
+            val req = Request.Builder().url("https://test3.htycoons.in/api/add_participant")
+                    .header("Authorization", "Bearer $token")
+                    .post(reqBody).build()
+
+            val client = OkHttpClient()
+
+            val res = client.newCall(req).execute()
+
+
+            uiThread {
+
+                when (res.code()) {
+                    200 -> {
+                        if (res.body() != null) {
                             AlertDialog.Builder(context!!)
-                                    .setTitle("Server Error")
-                                    .setMessage("Internal server error!")
+                                    .setTitle("Success!")
+                                    .setMessage("Details added successfully!")
                                     .setNeutralButton("OK") { dialog, which ->
                                         dialog.dismiss()
                                     }.show()
                         }
                     }
-                }
 
+                    400 -> {
+                        AlertDialog.Builder(context!!)
+                                .setTitle("Error")
+                                .setMessage("An error has occured!")
+                                .setNeutralButton("OK") { dialog, which ->
+                                    dialog.dismiss()
+                                }.show()
+                    }
 
-            }
-        }
+                    404 -> {
+                        AlertDialog.Builder(context!!)
+                                .setTitle("Server Error")
+                                .setMessage("Internal server error!")
+                                .setNeutralButton("OK") { dialog, which ->
+                                    dialog.dismiss()
+                                }.show()
+                    }
+                } // when clause
+            }  // ui thread
 
+        } // do async
     }
 
 }

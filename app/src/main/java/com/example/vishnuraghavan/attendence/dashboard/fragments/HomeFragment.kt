@@ -21,6 +21,7 @@ class HomeFragment: Fragment(){
         daysContent.text = arguments!!.getString("days")
         dateContent.text = arguments!!.getString("date")
         venueContent.text = arguments!!.getString("venue")
+
     }
 
 }

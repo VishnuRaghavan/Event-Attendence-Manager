@@ -54,6 +54,7 @@ class dashboardActivity : AppCompatActivity() {
         val pref = getSharedPreferences("eventToken",0)
         val token = pref.getString("access_token", "")
 
+        bundle.putString("eventID", intent.getStringExtra("event_id"))
         bundle.putString("name", intent.getStringExtra("name"))
         bundle.putString("days", intent.getStringExtra("days"))
         bundle.putString("date", intent.getStringExtra("date"))
