@@ -79,6 +79,12 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     404 -> {
+                        AlertDialog.Builder(this@MainActivity)
+                                .setTitle("Server error")
+                                .setMessage("server error has occured")
+                                .setNeutralButton("OK") { dialog, which ->
+                                    dialog.dismiss()
+                                }.show()
 
                     }
                 }

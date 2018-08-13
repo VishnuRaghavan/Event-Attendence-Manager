@@ -26,73 +26,69 @@ class AddMemberFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-    }
+        button2.setOnClickListener(){
 
-    fun add(v: View) {
+            val token = arguments!!.getString("token")
+//            Log.d("token", "token  is : $token")
 
-        val token = arguments!!.getString("token")
-        Log.d("token", "token  is : $token")
+            doAsync {
 
-        doAsync {
-
-            val reqBody = FormBody.Builder()
-                    .add("reg_id", reg.text.toString())
-                    .add("name", name.text.toString())
-                    .add("phone_number", phone.text.toString())
-                    .add("email_address", email.text.toString())
-                    .add("organization", organization.text.toString()).build()
+                val reqBody = FormBody.Builder()
+                        .add("reg_id", reg.text.toString())
+                        .add("name", name.text.toString())
+                        .add("phone_number", phone.text.toString())
+                        .add("email_address", email.text.toString())
+                        .add("organization", organization.text.toString()).build()
 
 
-            val req = Request.Builder().url("https://test3.htycoons.in/api/add_participant")
-                    .header("Authorization", "Bearer $token")
-                    .post(reqBody).build()
+                val req = Request.Builder().url("https://test3.htycoons.in/api/add_participant")
+                        .header("Authorization", "Bearer $token")
+                        .post(reqBody).build()
 
-            val client = OkHttpClient()
+                val client = OkHttpClient()
 
-            val res = client.newCall(req).execute()
-
-
+                val res = client.newCall(req).execute()
 
 
-            uiThread {
+                uiThread {
 
-                val ctx  = getContext()!!
+                    when (res.code()) {
+                        200 -> {
 
-                when (res.code()) {
-                    200 -> {
-                        if (res.body() != null) {
+                            if (res.body() != null) {
+                                AlertDialog.Builder(context!!)
+                                        .setTitle("Success!")
+                                        .setMessage("Details added successfully!")
+                                        .setNeutralButton("OK") { dialog, which ->
+                                            dialog.dismiss()
+                                        }.show()
+                            }
+                        }
 
-                            AlertDialog.Builder(ctx)
-                                    .setTitle("Success!")
-                                    .setMessage("Details added successfully!")
+                        400 -> {
+                            AlertDialog.Builder(context!!)
+                                    .setTitle("Error")
+                                    .setMessage("An error has occured!")
+                                    .setNeutralButton("OK") { dialog, which ->
+                                        dialog.dismiss()
+                                    }.show()
+                        }
+
+                        404 -> {
+                            AlertDialog.Builder(context!!)
+                                    .setTitle("Server Error")
+                                    .setMessage("Internal server error!")
                                     .setNeutralButton("OK") { dialog, which ->
                                         dialog.dismiss()
                                     }.show()
                         }
                     }
-
-                    400 -> {
-                        AlertDialog.Builder(ctx)
-                                .setTitle("Error")
-                                .setMessage("An error has occured!")
-                                .setNeutralButton("OK") { dialog, which ->
-                                    dialog.dismiss()
-                                }.show()
-                    }
-
-                    404 -> {
-                        AlertDialog.Builder(ctx)
-                                .setTitle("Server Error")
-                                .setMessage("Internal server error!")
-                                .setNeutralButton("OK") { dialog, which ->
-                                    dialog.dismiss()
-                                }.show()
-                    }
                 }
+
+
             }
-
-
         }
+
     }
 
 }
