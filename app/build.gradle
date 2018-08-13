@@ -8,7 +8,7 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.example.vishnuraghavan.attendence"
-        minSdkVersion 15
+        minSdkVersion 19
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -28,6 +28,8 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    implementation 'com.karumi:dexter:5.0.0'
+    implementation 'com.budiyev.android:code-scanner:1.9.4'
     implementation "org.jetbrains.anko:anko-commons:0.10.5"
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     implementation 'com.android.support:design:27.1.1'
