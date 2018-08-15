@@ -41,6 +41,8 @@ class dashboardActivity : AppCompatActivity() {
             }
             R.id.listItem -> {
                 val listFragment = ListFragment()
+                listFragment.arguments = bundle
+                addFragment(listFragment)
                 return@OnNavigationItemSelectedListener true
             }
         }
