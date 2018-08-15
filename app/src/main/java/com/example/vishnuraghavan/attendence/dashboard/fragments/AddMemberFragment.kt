@@ -20,6 +20,7 @@ import org.jetbrains.anko.uiThread
 
 class AddMemberFragment : Fragment() {
 
+    var token = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.add_member_fragment, container, false)
@@ -27,6 +28,9 @@ class AddMemberFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        token = arguments!!.getString("token")
+
         button2.setOnClickListener() {
 
             if (name.text.isNotEmpty()
@@ -63,7 +67,7 @@ class AddMemberFragment : Fragment() {
 
 
             val req = Request.Builder().url("https://test3.htycoons.in/api/add_participant")
-                    .header("Authorization", "Bearer ${arguments!!.getString("token")}")
+                    .header("Authorization", "Bearer $token")
                     .post(reqBody).build()
 
             val client = OkHttpClient()

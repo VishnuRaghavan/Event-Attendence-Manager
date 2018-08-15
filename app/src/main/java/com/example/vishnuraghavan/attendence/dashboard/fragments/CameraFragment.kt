@@ -4,6 +4,7 @@ import android.Manifest
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,17 +24,19 @@ import okhttp3.Request
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
+import org.json.JSONObject
 
 class CameraFragment : Fragment() {
 
     private lateinit var codeScanner: CodeScanner
+    var token = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.camera_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
+         token = arguments!!.getString("token")
         val scannerView = view.findViewById<CodeScannerView>(R.id.scanner_view)
         val activity = requireActivity()
 
@@ -45,7 +48,11 @@ class CameraFragment : Fragment() {
                         codeScanner.decodeCallback = DecodeCallback {
                             activity.runOnUiThread {
                                 val regID = it.text.toString()
-                                sentRequestToServer(regID)
+                                context!!.toast("msg: $regID")
+                                if(regID != ""){
+                                    sentRequestToServer(regID)
+                                }
+
                             }
                         }
 
@@ -64,9 +71,6 @@ class CameraFragment : Fragment() {
 
                 })
                 .check()
-
-
-
     }
 
     override fun onResume() {
@@ -80,7 +84,6 @@ class CameraFragment : Fragment() {
     }
 
      fun sentRequestToServer(regID: String) {
-        if (regID != "") {
             doAsync {
 
                 val reqBody = FormBody.Builder()
@@ -89,22 +92,23 @@ class CameraFragment : Fragment() {
                         .add("date", arguments!!.getString("date")).build()
 
                 val req = Request.Builder().url("https://test3.htycoons.in/api/daily_register")
-                        .header("Authorization", "Bearer ${arguments!!.getString("token")}")
+                        .header("Authorization", "Bearer $token")
                         .post(reqBody).build()
 
                 val client = OkHttpClient()
 
                 val res = client.newCall(req).execute()
 
+                Log.d("token","token : $token")
                 uiThread {
                     when (res.code()) {
                         200 -> {
+
                             AlertDialog.Builder(context!!)
                                     .setTitle("Registered Successfully")
                                     .setNeutralButton("OK"){ dialog, which ->
                                         dialog.dismiss()
-                                    }
-
+                                    }.show()
                         }
 
                         400 -> {
@@ -112,8 +116,7 @@ class CameraFragment : Fragment() {
                                     .setTitle("ERROR - Bad server response")
                                     .setNeutralButton("OK"){ dialog, which ->
                                         dialog.dismiss()
-                                    }
-
+                                    }.show()
                         }
 
                         404 -> {
@@ -121,12 +124,10 @@ class CameraFragment : Fragment() {
                                     .setTitle("ERROR 404")
                                     .setNeutralButton("OK"){ dialog, which ->
                                         dialog.dismiss()
-                                    }
-
+                                    }.show()
                         }
                     }
                 }
             }
-        }
     }
 }
