@@ -104,10 +104,6 @@ class CameraFragment : Fragment() {
             uiThread {
                 when (res.code()) {
                     200 -> {
-
-                        val pref = context!!.getSharedPreferences("eventToken", 0)
-                        pref.edit().putString("reg_id", regID).apply()
-
                         AlertDialog.Builder(context!!)
                                 .setTitle("Registered Successfully")
                                 .setNeutralButton("OK") { dialog, which ->

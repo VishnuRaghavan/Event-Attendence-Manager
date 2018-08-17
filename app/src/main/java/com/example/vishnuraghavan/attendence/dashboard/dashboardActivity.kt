@@ -40,7 +40,7 @@ class dashboardActivity : AppCompatActivity() {
                 return@OnNavigationItemSelectedListener true
             }
             R.id.listItem -> {
-                val listFragment = ListFragment()
+                val listFragment = com.example.vishnuraghavan.attendence.dashboard.fragments.list.ListFragment()
                 listFragment.arguments = bundle
                 addFragment(listFragment)
                 return@OnNavigationItemSelectedListener true
@@ -59,7 +59,7 @@ class dashboardActivity : AppCompatActivity() {
 
         bundle.putString("eventID", intent.getStringExtra("event_id"))
         bundle.putString("name", intent.getStringExtra("name"))
-        bundle.putString("days", intent.getStringExtra("days"))
+        bundle.putInt("days", intent.getIntExtra("days",0))
         bundle.putString("date", intent.getStringExtra("date"))
         bundle.putString("venue", intent.getStringExtra("venue"))
         bundle.putString("token", token.toString())

@@ -18,7 +18,7 @@ class HomeFragment: Fragment(){
         super.onViewCreated(view, savedInstanceState)
 
         nameContent.text = arguments!!.getString("name")
-        daysContent.text = arguments!!.getString("days")
+        daysContent.text = arguments!!.getInt("days").toString()
         dateContent.text = arguments!!.getString("date")
         venueContent.text = arguments!!.getString("venue")
 

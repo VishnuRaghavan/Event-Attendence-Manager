@@ -7,32 +7,31 @@ import android.view.ViewGroup
 import com.example.vishnuraghavan.attendence.R
 import kotlinx.android.synthetic.main.list_row.view.*
 
-class AttendenceAdapter(val Dates: ArrayList<AttendDates>): RecyclerView.Adapter<AttendenceAdapter.viewHolder>() {
+class MemberAdapter(val member: ArrayList<Member>) : RecyclerView.Adapter<MemberAdapter.viewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): viewHolder {
-        val layout = LayoutInflater.from(parent.context).inflate(R.layout.list_fragment,parent,false)
+        val layout = LayoutInflater.from(parent.context).inflate(R.layout.list_row, parent, false)
         return viewHolder(layout)
     }
 
     override fun onBindViewHolder(holder: viewHolder, position: Int) {
-        holder.Bind(Dates.get(position))
+        holder.Bind(member.get(position))
     }
 
     override fun getItemCount(): Int {
-        return Dates.size
+        return member.size
     }
 
 
-    class viewHolder(val v: View): RecyclerView.ViewHolder(v){
+    class viewHolder(val v: View) : RecyclerView.ViewHolder(v) {
 
-        fun Bind(date: AttendDates) {
-            v.date.text = date.date
+        fun Bind(mem: Member) {
+            v.registrationTextView.text = mem.regId
         }
-
 
     }
 }
 
-class AttendDates(var date: String){
+class Member(var name: String, var phoneNumber: String, var email: String, var organization: String, var regId: String) {
 
 }
