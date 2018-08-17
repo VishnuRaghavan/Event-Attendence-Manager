@@ -17,6 +17,7 @@ class HomeFragment: Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // displaying data to its textviews
         nameContent.text = arguments!!.getString("name")
         daysContent.text = arguments!!.getInt("days").toString()
         dateContent.text = arguments!!.getString("date")

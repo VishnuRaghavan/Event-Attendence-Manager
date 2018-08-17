@@ -3,12 +3,12 @@ package com.example.vishnuraghavan.attendence.dashboard
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
-import android.support.v4.app.ListFragment
 import android.support.v7.app.AppCompatActivity
 import com.example.vishnuraghavan.attendence.R
 import com.example.vishnuraghavan.attendence.dashboard.fragments.AddMemberFragment
 import com.example.vishnuraghavan.attendence.dashboard.fragments.CameraFragment
 import com.example.vishnuraghavan.attendence.dashboard.fragments.HomeFragment
+import com.example.vishnuraghavan.attendence.dashboard.fragments.ListFragment
 import kotlinx.android.synthetic.main.activity_dashboard.*
 
 
@@ -40,7 +40,7 @@ class dashboardActivity : AppCompatActivity() {
                 return@OnNavigationItemSelectedListener true
             }
             R.id.listItem -> {
-                val listFragment = com.example.vishnuraghavan.attendence.dashboard.fragments.list.ListFragment()
+                val listFragment = ListFragment()
                 listFragment.arguments = bundle
                 addFragment(listFragment)
                 return@OnNavigationItemSelectedListener true
@@ -71,7 +71,7 @@ class dashboardActivity : AppCompatActivity() {
     }
 
 
-    fun addFragment(fragment: Fragment){
+    fun addFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction().replace(R.id.base_layout, fragment).commit()
     }
 }

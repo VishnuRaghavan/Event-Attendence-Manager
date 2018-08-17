@@ -1,5 +1,6 @@
 package com.example.vishnuraghavan.attendence.Event
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
@@ -35,51 +36,64 @@ class eventsActivity : AppCompatActivity() {
         }
 
         doAsync {
-
+            // accessing sharedPreference for getting the stored token
             val pref = getSharedPreferences("eventToken", 0)
             val token = pref.getString("access_token", "")
-
+            // building the req object
             val req = Request.Builder().url("https://test3.htycoons.in/api/list_events")
                     .header("Authorization", "Bearer $token").post(FormBody.Builder().build()).build()
-
+            // setting up client
             val client = OkHttpClient()
+            // making request to server using req object and storing it to res variable
             val res = client.newCall(req).execute()
+            uiThread {
+                when (res.code()) {
+                    200 -> {
+                        if (res.body() != null) {
+                            val resString = res.body()!!.string()
+                            val json = JSONObject(resString)
+                            val eventsJson = json.getJSONArray("events")
+                            val eventsArray = ArrayList<Event>()
 
-            if (res.body() != null) {
-                val resString = res.body()!!.string()
-                val json = JSONObject(resString)
-                val eventsJson =json.getJSONArray("events")
-                val eventsArray = ArrayList<Event>()
+                            for (i in 0 until eventsJson.length()) {
+                                val event = Event(eventsJson.getJSONObject(i).getString("_id"),
+                                        eventsJson.getJSONObject(i).getString("event_name"),
+                                        eventsJson.getJSONObject(i).getString("date").split("T")[0],
+                                        eventsJson.getJSONObject(i).getString("venue"),
+                                        eventsJson.getJSONObject(i).getInt("days"),
+                                        eventsJson.getJSONObject(i).getInt("no_of_participants"))
 
-                for(i in 0..eventsJson.length() - 1){
-                  val event = Event(eventsJson.getJSONObject(i).getString("_id"),
-                          eventsJson.getJSONObject(i).getString("event_name"),
-                          eventsJson.getJSONObject(i).getString("date").split("T")[0],
-                          eventsJson.getJSONObject(i).getString("venue"),
-                          eventsJson.getJSONObject(i).getInt("days"),
-                          eventsJson.getJSONObject(i).getInt("no_of_participants"))
+                                eventsArray.add(event)
+                            }
+                            // setting up adapter
+                            recycle.layoutManager = LinearLayoutManager(this@eventsActivity, LinearLayoutManager.VERTICAL, false)
+                            val adapter = EventAdapter(eventsArray)
+                            recycle.adapter = adapter
+                        }
 
-                    eventsArray.add(event)
+                    }
+
+                    400 -> {
+                        // if 400 manage using alert box
+                        AlertDialog.Builder(this@eventsActivity)
+                                .setTitle("Bad response")
+                                .setNeutralButton("OK") { dialog, which -> dialog.dismiss() }.show()
+                    }
+
+                    404 -> {
+                        // if 404 manage using alert box
+                        AlertDialog.Builder(this@eventsActivity)
+                                .setTitle("No Internet Connection")
+                                .setNeutralButton("OK") { dialog, which -> dialog.dismiss() }.show()
+                    }
                 }
-
-                uiThread {
-                    recycle.layoutManager = LinearLayoutManager(this@eventsActivity,LinearLayoutManager.VERTICAL,false)
-
-                    val adapter = EventAdapter(eventsArray)
-
-                    recycle.adapter = adapter
-                }
-
-
             }
         }
     }
 
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-
         val mymenu = MenuInflater(this).inflate(R.menu.menu, menu)
-
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -88,9 +102,9 @@ class eventsActivity : AppCompatActivity() {
             R.id.logout -> {
                 getSharedPreferences("eventToken", 0)
                         .edit().putString("access_token", "").apply()
-
+                // Intents
                 startActivity(intentFor<MainActivity>())
-                finish()
+                finish() // killing the previous activity
             }
         }
         return super.onOptionsItemSelected(item)

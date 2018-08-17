@@ -30,31 +30,30 @@ import org.json.JSONObject
 
 class CameraFragment : Fragment() {
 
-    private lateinit var codeScanner: CodeScanner
-    var token = ""
+    private lateinit var codeScanner: CodeScanner // defining the codescanner variable as CodeScanner type !
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.camera_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        token = arguments!!.getString("token")
-        val scannerView = view.findViewById<CodeScannerView>(R.id.scanner_view)
-        val activity = requireActivity()
+
+
+        val scannerView = view.findViewById<CodeScannerView>(R.id.scanner_view) // finding the scanner id
+        val activity = requireActivity() // getting activity
+
+        // dexter thirdparty library
 
         Dexter.withActivity(activity)
-                .withPermission(Manifest.permission.CAMERA)
-                .withListener(object : PermissionListener {
-                    override fun onPermissionGranted(response: PermissionGrantedResponse?) {
+                .withPermission(Manifest.permission.CAMERA) // setting up camera dynamic permission
+                .withListener(object : PermissionListener {   // permission object having its methods
+                    override fun onPermissionGranted(response: PermissionGrantedResponse?) {  // method called if permission granted
                         codeScanner = CodeScanner(activity, scannerView)
-                        codeScanner.decodeCallback = DecodeCallback {
-                            activity.runOnUiThread {
+                        codeScanner.decodeCallback = DecodeCallback { // decoding the QR pattern
+                            activity.runOnUiThread {  // firing up ui thread for displaying it in ui
                                 val regID = it.text.toString()
 //                                context!!.toast("msg: $regID")
-                                if (regID != "") {
-                                    sentRequestToServer(regID)
-                                }
-
+                                if (regID != "") { sentRequestToServer(regID) }
                             }
                         }
 
@@ -75,57 +74,52 @@ class CameraFragment : Fragment() {
                 .check()
     }
 
-    override fun onResume() {
+    override fun onResume() {  // method called  on resume
         super.onResume()
         codeScanner.startPreview()
     }
 
-    override fun onPause() {
+    override fun onPause() {  // method called on pause
         codeScanner.releaseResources()
         super.onPause()
     }
 
-    fun sentRequestToServer(regID: String) {
+    fun sentRequestToServer(regID: String) {  // custom function written to organise  server codes
         doAsync {
 
-            val reqBody = FormBody.Builder()
+            val reqBody = FormBody.Builder() // building the request body
                     .add("event_id", arguments!!.getString("eventID"))
                     .add("reg_id", regID)
                     .add("date", arguments!!.getString("date")).build()
 
-            val req = Request.Builder().url("https://test3.htycoons.in/api/daily_register")
-                    .header("Authorization", "Bearer $token")
+            val req = Request.Builder().url("https://test3.htycoons.in/api/daily_register") // building request object using request body
+                    .header("Authorization", "Bearer ${arguments!!.getString("token")}")
                     .post(reqBody).build()
 
-            val client = OkHttpClient()
+            val client = OkHttpClient() // initialising the client
 
-            val res = client.newCall(req).execute()
+            val res = client.newCall(req).execute() // setting up the response
 
             uiThread {
                 when (res.code()) {
-                    200 -> {
+                    // checking the res code
+                    200 -> {  // if 200 display success
                         AlertDialog.Builder(context!!)
                                 .setTitle("Registered Successfully")
-                                .setNeutralButton("OK") { dialog, which ->
-                                    dialog.dismiss()
-                                }.show()
+                                .setNeutralButton("OK") { dialog, which -> dialog.dismiss() }.show()
 
                     }
 
-                    400 -> {
+                    400 -> { // if 400 display error response
                         AlertDialog.Builder(context!!)
                                 .setTitle("ERROR - Bad server response")
-                                .setNeutralButton("OK") { dialog, which ->
-                                    dialog.dismiss()
-                                }.show()
+                                .setNeutralButton("OK") { dialog, which -> dialog.dismiss() }.show()
                     }
 
-                    404 -> {
+                    404 -> { // if 404 display 404 error
                         AlertDialog.Builder(context!!)
                                 .setTitle("ERROR 404")
-                                .setNeutralButton("OK") { dialog, which ->
-                                    dialog.dismiss()
-                                }.show()
+                                .setNeutralButton("OK") { dialog, which -> dialog.dismiss() }.show()
                     }
                 }
             }

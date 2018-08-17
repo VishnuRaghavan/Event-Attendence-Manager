@@ -20,17 +20,12 @@ import org.jetbrains.anko.uiThread
 
 class AddMemberFragment : Fragment() {
 
-    var token = ""
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.add_member_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        token = arguments!!.getString("token")
-
         button2.setOnClickListener() {
 
             if (name.text.isNotEmpty()
@@ -67,13 +62,12 @@ class AddMemberFragment : Fragment() {
 
 
             val req = Request.Builder().url("https://test3.htycoons.in/api/add_participant")
-                    .header("Authorization", "Bearer $token")
+                    .header("Authorization", "Bearer ${arguments!!.getString("token")}")
                     .post(reqBody).build()
 
             val client = OkHttpClient()
 
             val res = client.newCall(req).execute()
-
 
             uiThread {
 
@@ -83,9 +77,7 @@ class AddMemberFragment : Fragment() {
                             AlertDialog.Builder(context!!)
                                     .setTitle("Success!")
                                     .setMessage("Details added successfully!")
-                                    .setNeutralButton("OK") { dialog, which ->
-                                        dialog.dismiss()
-                                    }.show()
+                                    .setNeutralButton("OK") { dialog, which -> dialog.dismiss() }.show()
                         }
                     }
 
@@ -93,18 +85,14 @@ class AddMemberFragment : Fragment() {
                         AlertDialog.Builder(context!!)
                                 .setTitle("Error")
                                 .setMessage("An error has occured!")
-                                .setNeutralButton("OK") { dialog, which ->
-                                    dialog.dismiss()
-                                }.show()
+                                .setNeutralButton("OK") { dialog, which -> dialog.dismiss() }.show()
                     }
 
                     404 -> {
                         AlertDialog.Builder(context!!)
                                 .setTitle("Server Error")
                                 .setMessage("Internal server error!")
-                                .setNeutralButton("OK") { dialog, which ->
-                                    dialog.dismiss()
-                                }.show()
+                                .setNeutralButton("OK") { dialog, which -> dialog.dismiss() }.show()
                     }
                 } // when clause
             }  // ui thread
